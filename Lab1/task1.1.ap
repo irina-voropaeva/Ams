@@ -1,0 +1,12 @@
+INCLUDE <../include/std.ap>
+
+NAME rsGCD;
+rsGCD := rs(x, y)(
+(x, x) = x,
+ (x < y) ->((x, y) = (x, y -x)),
+(x, y) = (x - y, y)
+);
+NAME T;
+ T := (45, 60);
+task := appls(T, rsGCD), prn(T); 
+//task := applr(T, rsGCD), prn(T); 
