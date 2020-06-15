@@ -1,0 +1,17 @@
+INCLUDE <../include/std.ap>
+INCLUDE <../include/gen_obj.ap>
+INCLUDE <../include/strat.ap>
+
+NAMES R,T;
+
+T:=F(0.0, 5.0, 0.5, 0); /* a, b, h, s */
+
+R:=rs(f, a, b, h, s)(
+  F(a, a, h, s) = s,
+  F(a, b, h, s) = F(a+h, b, h, s+((((a*3+2)))*h))
+);
+
+task:=(
+  applytb(T,R);
+  prn(T)
+);
