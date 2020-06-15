@@ -1,6 +1,9 @@
-INCLUDE <ac.ap>
+INCLUDE <../include/std.ap>
+
 MARK subs(2);
+
 /* <=>, ->, де Морган */
+
 NAME R;
 R :=rs(x,y)(
 		x <=> y = (x -> y) & (y -> x),
