@@ -1,0 +1,82 @@
+INCLUDE <ac.ap>
+MARK subs(2);
+/* <=>, ->, де Морган */
+NAME R;
+R :=rs(x,y)(
+		x <=> y = (x -> y) & (y -> x),
+		x -> y = ~(x) || y,
+		~( ~(x) ) = x,
+		~(x || y) = (~(x) & ~(y)),
+		~(x & y) = (~(x) || ~(y)),
+		~(x <=> y) = (~(x -> y) || ~(y -> x)),
+		~(x -> y) = (x & ~(y))
+	);
+
+/* КНФ*/
+
+NAMES R1,Q1;
+R1 :=rs(x,y,z,u,v)(
+		(x & y || z & u) & v = (x || u) & (y || z) & (y || u) &(x || z) & v,
+		(x & y || z) & u = ( y || z) & (x ||z) & u,
+		(x || y & z) & u = ( x || z) & (x || y) & u,
+		x & y || z & u = ((x || z) & (y || z)) & (x || u) &(y || u) ,
+		x & y || z = ( x || z) & (y || z),
+		x || y & z = ( x || y) & (x || z)
+	);
+	Q1 :=rs(x,y,z)(
+		(x & y)|| z = (x || z) & (y || z) ,
+		x ||(y & z) = (x || y) & (x || z),
+		(x || y)|| z = x || y || z
+	);
+
+NAME cnf;
+
+cnf:=proc(x)(
+		ntb(x,R),
+		can_ord(x,R1,Q1),
+		return(x)
+	);
+	
+	
+NAME deM;
+deM :=rs(x,y)(
+		~( ~(x) ) = x,
+		~(x || y) = deM(~(x)) & deM( ~(y)),
+		~(x & y) = deM(~(x)) || deM(~(y))
+	);
+
+
+
+
+NAME I1;
+
+Id:=rs(x,y,z)(
+		1 -> 0 = 0,
+		0 -> x = 1,
+		x -> x = 1,
+		x -> 1 = 1,
+		x -> y || z = x & deM( ~(y) ) -> z,
+		x -> y & z =(x -> y) &( x -> z),
+		x || y -> z =(x -> z) &( y -> z),
+		x & y -> ~(z) = subs(z=1,x) -> deM( ~(subs(z=1,y))),
+		x & y -> z = subs(z=0,x) -> deM( ~(subs(z=0,y))),
+		x -> y = 0
+	);
+
+NAME ntb2;
+
+ntb2:=proc(t,R)(
+		appls(t,R);
+		(ART(t)>0)->ntb2 (arg(t,1),R);
+		t:=can(t);
+		ntb2 (t,R)
+	);
+
+NAME is_id;
+
+is_id:=proc(x)(
+		ntb(x,R);
+		x-->(1->x);
+		ntb2(x,Id);
+		return(x)
+	);
