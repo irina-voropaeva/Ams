@@ -1,0 +1,42 @@
+
+NAMES trace_unf;
+trace_unf:=0;
+
+NAMES fact;
+unfold_rs:=rs(n,x,y,P)(
+
+/* General compositions */
+
+    (x; y) = seq(x;y),
+     x||y  = intens(lmrg(x,y)+lmrg(y,x)),
+     x|^1  = x,
+     x|^2  = intens(synchr(x,x)+lmrg(x,x)),
+     x|^n  = x||(x|^(n-1)),
+
+
+/* Call external environment */
+
+    doprog P  = Fdo P & Delta,
+    wait = doprog (wait_ent()),
+	
+/* telo functions */
+
+    telo M = ((sshift(M) + shift(M,W) + shift(M,G) + shift(M,C));telo M)
+    
+);
+
+
+combine:=rs(x,y)(
+    x >< y = mrg(x >< y)
+);
+
+
+
+unfold:=proc(x)(
+trace_unf->(put("\nunfold  in: "x);wait_ent());
+    appls(x,unfold_rs);
+trace_unf->(put("\nunfold out: "x);wait_ent());
+    return x
+);
+
+

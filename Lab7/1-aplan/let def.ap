@@ -1,0 +1,28 @@
+
+NAME let;
+let:=proc(x,y)loc(p,s,i)(
+    equ(y, _ )->(
+        yes:=1;
+        return(1)
+    );
+    isname(y)->(
+        p--> `(x);
+        do(y-->p);
+        yes:=1;
+        return(1)
+    );
+    is_type(x,y)->(
+        forall(s=arg(x,i),
+            let(s,arg(y,i));
+            ~(yes)->return(0)
+        );
+        yes:=1;return(1)
+    )else(
+        yes:=0;return(0)
+    )
+);
+
+/*
+To call let in Aplan definition the second argument must
+be called as is that is with quota: let(x, `(y))
+*/

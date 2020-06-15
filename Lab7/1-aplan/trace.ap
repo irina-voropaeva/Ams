@@ -1,0 +1,117 @@
+
+
+NAMES TT,Equation,Equ_num;
+Equation:=nil;
+
+NAMES applybt_tr,nbt_tr,ntb_tr,appls_tr,lmt_tr;
+
+applybt_tr:=proc(t,R)loc(cont,n)(
+    n:=1;
+    dowhile(
+        put(
+            "\n=============== path "n" ==============="
+            "\ninput term: "t
+        );
+        cont:=nbt_tr(t,R);
+        wait_ent();
+        n:=n+1
+    )cont
+);
+
+nbt_tr:=proc(t,R)loc(cont,s,i)(
+    cont:=0;
+    forall(s=arg(t,i),
+        cont:=cont|/nbt_tr(s,R)
+    );
+    cont:=cont|/appls_tr(t,R);
+    t:=can(t);
+    return(cont)
+);
+
+ntb_tr:=proc(t,R)loc(cont,s,i)(
+    cont:=0;
+    cont:=cont|/appls_tr(t,R);
+    forall(s=arg(t,i),
+        cont:=cont|/ntb_tr(s,R)
+    );
+    t:=can(t);
+    return(cont)
+);
+
+appls_tr:=proc(t,R)loc(Yes,term,subterm,cont)(
+    cont:=0;
+    Yes:=0;
+    dowhile(
+        term:=t;
+        applr(t,R);
+        yes->(
+            Yes:=1;
+            put("\n"term" = "t);
+            ~(equ(Equation,nil))->(
+                put("\nrule: "arg(Equation,Equ_num(term)))
+            )else(
+                put("\ninitialize Equation and Equ_num");
+                Yes:=0
+            )
+        )else Yes:=0;
+        cont:=cont|/Yes
+    )Yes;
+    return(cont)
+);
+
+NAME lmt_rec_tr;
+lmt_tr:=proc(t,R)loc(Yes)(
+    dowhile(
+        put("\nterm = "t);
+        Yes:=lmt_rec_tr(t,R)
+    )Yes
+);
+
+lmt_rec_tr:=proc(t,R)loc(Yes,s,i)(
+    t:=can(t);
+    Yes:=appls_tr(t,R);
+    Yes->(wait_ent();return(1));
+    forall(s=arg(t,i),
+        Yes:=lmt_rec_tr(s,R);
+        Yes->return(1)
+    );
+    t:=can(t);
+    return(0)
+);
+
+NAME can_ord_tr,can_up_tr,appls_tr_st;
+
+NAMES down_equ,up_equ;
+
+NAME st;
+st:=nil;
+
+appls_tr_st:=proc(t,R,eq)(
+    TT-->t;
+    st-->(Equation,st);
+    Equation-->eq;
+    appls_tr(t,R);
+    Equation-->arg(st,1);
+    st-->arg(st,2)
+);
+
+can_ord_tr:=proc(t,R1,R2)loc(s,i)(
+              t:=can(t);
+              appls_tr_st(t,R1,down_equ);
+                 forall(s=arg(t,i),
+                      can_ord_tr(s,R1,R2)
+                 );
+              can_up_tr(t,R2)
+);
+
+can_up_tr:=proc(t,R)loc(s,i)(
+              appls_tr_st(t,R,up_equ);
+              while(yes,
+                 forall(s=arg(t,i),
+                     can_up_tr(s,R)
+                 );
+                 appls_tr_st(t,R,up_equ)
+              );
+              t:=can(t);
+              merge(t)
+);

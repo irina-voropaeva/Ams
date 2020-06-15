@@ -1,0 +1,24 @@
+/* moved to imslib
+NAMES sim_init,Finish;
+
+sim_init:=proc()(
+    put("\n\n\n======================================= ");
+ /*   markcan(starg((),(),()),starg_fun ); 
+    markcan((().()),comma_can); moved to intlib*/
+    armrk:=array(());
+	ims_init()
+);
+
+Finish:=(
+    put("\nend of a session");
+    wait_ent();
+    exit()
+);
+
+NAME check_time;
+check_time:=proc()loc(s)(
+    s:=time_stop(clock);
+    put("\ntime ");
+    prn_time(s);
+    return Delta
+);*/

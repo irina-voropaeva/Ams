@@ -1,0 +1,84 @@
+/*all moved to imsilib*/
+
+NAMES /*prn_trace,prn_trace_rs,*/ prn_state_in_trace, /* corrected 12.06.10. */
+make_traces_files;
+make_traces_files:=0; /*corrected 1.12.09 by VP*/
+
+
+prn_state_in_trace:=proc(n,a)loc(x)(
+	case_let make_traces_files(
+		1->prn_file(n,a)
+	);
+	let(a,Mesg(x));
+	yes->put(x) /* corrected 12.06.10 */
+	else prn(a);
+	return 1
+);
+
+
+
+/*NAMES trace_goal,trace_visited,trace_safety,trace_deadlock,trace_delta;
+trace_goal:=0;
+trace_visited:=0;
+trace_safety:=0;
+trace_deadlock:=0;
+trace_delta:=0;
+
+
+prn_trace:=proc(n,c,x)( /*corrected 1.12.09 by VP*/
+    line();
+	case_let make_traces_files(
+		1->prn_file(n,"\ntrace "c":\n")
+	);
+	put("\ntrace");
+    applr((n,new(x)),prn_trace_rs);
+	/*appls_prn_trace_rs(n,x); in imslib*/
+    line()
+);
+
+
+prn_trace_rs:=rs(n,m,a,x,y,back)(       
+    (n,Nil) = 1,
+    (n,m:(a->x)+y,back) = prn_trace_rs(n,back) & prn_state_in_trace(n,a), /*corrected 1.12.09 by VP*/
+    (n,m:(a->x),  back) = prn_trace_rs(n,back) & prn_state_in_trace(n,a)
+);
+
+
+goal_state_processing:=proc(T)loc(m,B,P,Q,back)(
+	trace_goal:=trace_goal+1; /*corrected 1.12.09 by VP*/
+    let(T,(m:(B->P)+Q,back));
+    put("\n\ngoal state\n"(B->P));
+    prn_trace("goal_traces.ap",trace_goal,m:B->P,back) /*corrected 1.12.09 by VP*/
+);
+
+safety_violation_processing:=proc(T,s)loc(m,B,P,Q,back)(
+	trace_safety:=trace_safety+1; /*corrected 1.12.09 by VP*/
+    let(T,(m:(B->P)+Q,back));
+    put("\n\nsfety violation\n"(B->P));
+    put("\n\nsafety conditon "s);
+    prn_trace("safety_traces.ap",trace_safety,m:B->P,back) /*corrected 1.12.09 by VP*/
+);
+*/
+visited_processing:=proc(T)loc(m,B,P,Q,back)(
+    let(T,(m:(B->P)+Q,back));
+	show_step->put("\nvisited\n"P)	/* corrected 09.06.10 */
+	
+	
+/*	corrected 04.05.10 AL
+    show_step->(put("\n\nvisited\n"(B->P));line());
+	trace_visited:=trace_visited+1;prn_trace("visited_traces.ap",trace_visited,m:B->P,back)  /*corrected 1.12.09 by VP*/
+*/	
+);
+/*
+deadlock_processing:=proc(T)loc(m,B,P,Q,back)(
+    let(T,(m:(B->P)+Q,back));
+    put("\n\ndead lock state\n"(B->P));
+    trace_deadlock:=trace_deadlock+1;prn_trace("deadlock_traces.ap",trace_deadlock,m:B->P,back) /*corrected 1.12.09 by VP*/
+);
+
+successful_processing:=proc(T)loc(m,B,P,Q,back)(
+	trace_delta:=trace_delta+1;
+    let(T,(m:(B->P)+Q,back));
+    put("\n\nsuccessful termination state\n"(B->P));
+    prn_trace("delta_traces.ap",trace_delta,m:B->P,back) /*corrected 1.12.09 by VP*/
+);*/

@@ -1,0 +1,59 @@
+
+NAMES extend_rs,uni;
+
+extend_rs:=proc(R,S)loc(x,y,u,v)(
+    let(S, rs(x)(y));
+    case_let R(
+	rs Nil   -> R:=S;
+        rs(u)(v) -> (
+	    u:=uni (x,new(u));
+	    v:=conc(y,new(v))
+	)
+    );
+    return 1
+);
+
+uni:=rs(x,y,z)(
+    ( Nil, z ) = z,
+    ((x,y),z ) = uni(y,uni(x,z)),
+    ( x,(x,z)) = (x,z),
+    ( x, x   ) = x,
+    ( x,(y,z)) = (y,uni(x,z)),
+    ( x, y   ) = (y,x)
+);
+
+NAMES prn_rs,prn_rs_rs,prn_equ,wprn_rs,wprn_rs_rs,wprn_equ;
+ prn_rs:=proc(x)(return  prn_rs_rs x);
+wprn_rs:=proc(x)(return wprn_rs_rs x);
+ prn_rs_rs:=rs(x,p) (
+    rs(x)(p) = put("\nrs("x")(") & prn_equ p & put("\n);"),
+       x     = put("\nnot rs ")
+);
+wprn_rs_rs:=rs(x,p)(
+    rs(x)(p) = put("\nrs("x")(") & wprn_equ p & put("\n);"),
+       x     = put("\nnot rs ")
+);
+NAME prn_one;
+ prn_equ:=rs(x,y)(
+    (x,y) = prn_one x&put(",")& prn_equ y,
+     x    = prn_one x
+);
+wprn_equ:=rs(x,y)(
+    (x,y) = prn_one x&put(",")&wait_ent()&wprn_equ y,
+     x    = prn_one x
+);
+prn_one:=rs(p,q,r,u)(
+    (u->(p = q)) = put("\n"u" -> (\n   "(p=q)"\n)"),
+    (   (p = q)) = put(          "\n   "(p=q)),
+         p       = put("\nnot equation\n   "p)
+);
+
+NAME make_pred;
+make_pred:=rs(u,x,y,z)(
+    rs x y = rs(_x,copy(x))make_pred y,
+    ((u->(x=y)),z) = (copy(x)=1,make_pred z),
+    (     x=y,  z) = (copy(x)=1,make_pred z),
+    ( u->(x=y)   ) = (copy(x)=1, _x=0),
+    (     x=y    ) = (copy(x)=1, _x=0)
+);
+

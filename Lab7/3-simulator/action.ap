@@ -1,0 +1,17 @@
+/* moved to imslib 21.12.09
+is_act:=rs(x)(
+    env(x,y) = 0,
+	x[y]=0,
+    x = ~(is_proc_call new(x))& ~(is_trm x)
+);*/
+
+/* moved to imslib 21.12.09
+is_trm:=rs(x)(
+    Delta+bot = 1,
+    Delta     = 1,
+          bot = 1,
+            0 = 1,
+            x = 0
+);
+*/
+

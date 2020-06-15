@@ -1,0 +1,55 @@
+
+NAMES make_Nil,set_Nil,update_ar,prn_ar;
+/* on C++ layer VG */
+
+NAME extend_ar;
+
+make_Nil:=proc(x)(
+    return(set_Nil node(armrk,ART(x)))
+);
+
+set_Nil:=proc(x)loc(i,ar,y)(
+    ar:=ART(x);
+    for(i:=1,i<=ar,i:=i+1,
+        x(i)-->Nil
+    );
+    return(x)
+);
+
+update_ar:=proc(x,y)loc(z,arx,ary,i)(
+    arx:=ART(x);
+    ary:=ART(y);
+    for(i:=1,i<=arx & i<=ary,i:=i+1,
+        z-->arg(y,i);
+        x(i)-->z
+    )
+);
+
+extend_ar:=proc(x,y)loc(z,m)(
+    m:=ART(x)+1;
+    z-->node(array(Nil),m);
+    update_ar(z,x);
+    z m --> y;
+    return z
+);
+
+
+
+NAMES make_list;
+prn_ar:=proc(x)loc(y)(
+    y-->copy(x);
+    make_list(y);
+    prn(y)
+);
+
+make_list:=proc(x)loc(s,i)(
+    (mark(x)==armrk)->
+        x:=ARR arglist(x);
+    (ART(x)>0)->
+        forall(s=arg(x,i),
+            make_list(s)
+        )
+);
+
+
+

@@ -1,0 +1,10 @@
+
+(
+	obj(
+		W:obj(coast:0);
+		G:obj(coast:0);
+		C:obj(coast:0);
+		M:obj(coast:0)
+	)
+)[telo M];
+	

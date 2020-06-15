@@ -1,0 +1,81 @@
+
+/*	Input for check_filter 
+	This filter recognizes 
+E[Delta] as successful termination;
+E[0] as dead lock;
+E[bot] as undefined state.
+	It assumes that E is a kernel state.
+	What is violated?
+	check_violation returns the conjunction of the names of 
+	violated safety conditions 
+*/	
+	
+NAMES check_goal,
+      check_violation,
+      violated,
+	  check_visited;
+
+check_filter:=proc(B,Q)loc(E,f,P,R,S)( 
+equ(Q,0)->(put("\nQ=0");wait_ent());
+    let(Q, E[P]);
+    ~(yes)->(put("\nfilter: unknown state "Q);wait_ent());
+
+/*  equ(B,init)->f:=not filtered corrected 05.06.10 */
+   
+    branch(
+        equ(P,Delta)        ->f:=successful termination; 	/* corrected 02.05.10. */
+        equ(P,0)     	    ->f:=dead lock;
+        equ(P,bot)     	    ->f:=bot;
+        check_goal(E,P)     ->f:=goal state;
+        check_violation(E,P)->f:=safety violation conj2list violated;
+		equ(B,init)         ->f:=not filtered;
+        check_visited Q   	->f:=visited;
+        f:=not filtered     
+    );		/* corrected 05.06.10, change order */
+    return f
+);
+
+
+PRIVATE list_visited,check_in_list;
+list_visited:=Nil;
+ 
+/* moved to imslib */
+check_visited:=proc(P)loc(f)(
+    interactive_mode->return 0; 
+/*corrected 29.10.09 by VP no visited for interactive mode*/
+    check_in_list(P,list_visited)->f:=1
+    else(
+        list_visited-->(copy(P),list_visited);
+        f:=0
+    );
+    return f
+);
+
+list_visited:=Nil;
+
+check_in_list:=rs(P,Q,x)(
+    (P,P,x) = 1,
+    (P,Q,x) = check_in_list(P,x),
+    (P,Nil) = 0
+);
+
+check_goal:=proc(E,P)loc(F)(
+	return 0
+);
+
+check_violation:=proc(E,P)loc(S,m,F,T)(
+    return 0
+);
+
+
+
+
+
+
+
+
+
+
+
+
+

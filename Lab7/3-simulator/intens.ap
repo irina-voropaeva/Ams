@@ -1,0 +1,90 @@
+
+/*
+NAME intens;
+
+NAME simpl,intens_trm;
+
+intens:=rs(a,P,Q,R)(
+    P+Q = simpl(intens P+intens Q),
+    a.R = a.R,
+is_act(`(a))   ->(a = new(a).Delta),
+is_proc_call(`(R))->(R = intens_trm unfold R)
+);
+
+intens_trm:=rs(a,P,Q,R)(
+    P+Q = simpl(intens_trm P+intens_trm Q),
+    a.R = a.R,
+is_act(`(a))   ->(a = new(a).Delta)
+);
+
+NAME idemp;
+
+simpl:=rs(x,y,z)(
+    (x+y)+z = x+simpl(y+idemp(x,z)),
+     x   +z = x+idemp(x,z)
+);
+
+idemp:=rs(x,y,z)(
+    (x,x+y) = y,
+    (x,x  ) = 0,
+    (x,y+z) = y+idemp(x,z),
+    (x,y  ) = y
+);
+
+
+NAME complete_intens;
+complete_intens:=rs(a,P,Q,R)(
+    P+Q = simpl(complete_intens P+complete_intens Q),
+    a.R = a.R,
+is_act(`(a))   ->(a = new(a).Delta),
+is_proc_call(`(R))->(R = complete_intens unfold R)
+);
+
+
+NAME fast_intens;
+fast_intens:=rs(a,P,Q,R)(
+    (P+Q)+R = fast_intens(P+Q+R),
+
+    Delta+Delta+P = fast_intens(Delta+P),
+    Delta+P+Q     = fast_intens(P+Delta+Q),
+    Delta+Delta   = Delta,
+    Delta+P       = fast_intens(P+Delta),
+
+    a.P+Q   = a.P+fast_intens Q,
+    a.R     = a.R,
+is_proc_call(`(P))->(
+    P+Q     = fast_intens(unfold(P)+Q)
+),
+is_proc_call(`(R))->(
+    R       = fast_intens unfold R
+),
+~(is_trm a)->(
+    a+Q     = a.Delta+fast_intens Q
+),
+    a+Q     = a+fast_intens Q,
+~(is_trm a)->(
+    a       = new(a).Delta
+)
+);
+NAME short_intens;
+
+short_intens:=proc(x)(
+    x-->unfold_rs(x);
+    yes->return x;
+	return(x.Delta)
+);
+*/
+
+
+/* input is a turned right sum */
+NAME apply_idemp;
+apply_idemp:=rs(x,y,z)(
+	(x+x+y) = apply_idemp(x+y),
+	(x+x  ) = x,
+	(x+y+z) = x+apply_idemp(y+idemp(x,z))	
+);
+
+
+
+
+

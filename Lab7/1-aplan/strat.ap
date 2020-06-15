@@ -1,0 +1,278 @@
+
+/* NAME appls; */
+
+NAME checkbt;
+checkbt:=proc(t,R,cont)loc(s,i)(
+    forall(s=arg(t,i),
+        cont-->cont|/checkbt(s,R,cont)
+    );
+    appls(t,R);
+    cont:=cont|/yes;
+    t:=can(t);
+    return(cont)
+);
+
+/* 18.04.04. Final strategy. Need optimization */
+
+NAME applybt;
+applybt:=proc(t,R)loc(cont)(
+    line();
+    dowhile(
+        cont:=checkbt(t,R,0)/*;
+        put(" garb");
+        garb(); not needed in pas.v3  
+        put(",")*/
+    )cont;
+    line()
+);
+
+NAME gappls;
+gappls:=proc(t,R)loc(n)(
+    applr(t,R);
+    yes->(
+        n:=1;
+        dowhile(
+            (n mod 1000 == 0)->(
+                /* garb(); */
+                put("n="n", ")
+            );
+            n:=n+1;
+            applr(t,R)
+        )yes;
+        yes:=1;
+        return 1
+    );
+    return 1
+);
+
+
+
+
+/*
+Moved to sublib
+appls:=proc(t,R)(
+put("\nappls started t="t);
+    applr(t,R);
+put("\n  first applr t="t);
+    yes->(
+        dowhile(
+put("\ndowhile t="t);
+            applr(t,R)
+;put("\nyes="yes);
+put("\n    new t="t);
+wait_ent()
+        )yes;
+        yes:=1;
+        return 1
+    );
+    return 1
+);
+appls:=proc(t,R)(
+    applr(t,R);
+    yes->(
+        dowhile(
+            applr(t,R)
+        )yes;
+        yes:=1;
+        return 1
+    );
+    return 1
+);
+*/
+
+/* 
+Need optimization. Final 
+
+NAMES nbt,ntb;
+
+
+Moved to sublib
+ntb:=proc(t,R)loc(s,i)(
+
+    appls(t,R);
+    forall(s=arg(t,i),
+        ntb(s,R)
+    );
+    t:=can(t)
+;put("\nntb out "t)
+);
+
+ntb:=proc(t,R)loc(s,i)(
+put("\nntb_in:"t);
+    appls(t,R);
+put("\nntb_in1:"t);
+    forall(s=arg(t,i),
+        ntb(s,R)
+    );
+    t:=can(t)
+;put("\nntb_out:"t)
+);
+nbt:=proc(t,R)loc(s,i)(
+    forall(s=arg(t,i),
+        nbt(s,R)
+    );
+    appls(t,R);
+    t:=can(t)
+);
+*/
+
+/*
+?????????????????
+nbt:=new_nbt;
+ntb:=new_ntb;
+*/
+
+
+lmt:=proc(t,R)loc(Yes,n)(
+    line();
+    n:=1;
+    dowhile(
+        Yes:=lmt_rec(t,R);
+        /* garb(); */
+        (n mod 1000 ==0)->put("n="n" ");
+        n:=n+1
+    )Yes;
+    line()
+);
+
+lmt_rec:=proc(t,R)loc(Yes,s,i)(
+    t:=can(t);
+    appls(t,R);
+    yes->return(1);
+    forall(s=arg(t,i),
+        Yes:=lmt_rec(s,R);
+        Yes->return(1)
+    );
+    t:=can(t);
+    return(0)
+);
+
+ntb2:=proc(t,R)loc(s,i)(
+          appls(t,R);
+          (ART(t)>0)->ntb2 (arg(t,1),R);
+          t:=can(t);
+          (ART(t)>0)->ntb2 (t,R)
+);
+
+/*
+Moved to sublib
+*/
+
+NAME ntb0;
+ntb0:=proc(t,R)loc(s,i)(
+    applr(t,R);
+    forall(s=arg(t,i),
+        ntb0(s,R)
+    )
+);
+
+
+
+ntb0s:=proc(t,R)loc(s,i)(
+    appls(t,R);
+    forall(s=arg(t,i),
+        ntb0(s,R)
+    )
+);
+
+can_right:=proc(x,R)(
+    appls(x,R);
+    while(yes,
+        (ART(x)>1)->can_right(arg(x,2),R);
+        appls(x,R)
+    )
+);
+
+
+NAMES can_ord,can_up;
+
+
+/*
+NAME cc;
+cc:=0;
+
+can_ord:=proc(t,R1,R2)loc(s,i)(
+    t:=can(t);
+    appls(t,R1);
+    for(i:=1,i<=ART(t),i:=i+1,
+(cc mod 100==0)->put(" dn "cc);cc:=cc+1;
+        can_ord(arg(t,i),R1,R2)
+;cc:=cc-1;(cc mod 100==0)->put(" up ")
+    );
+    can_up(t,R2)
+);
+
+can_up:=proc(t,R)loc(s,i)(
+    appls(t,R);
+    while(yes,
+        for(i:=1,i<=ART(t),i:=i+1,
+(cc mod 100==0)->put(" dn "cc);cc:=cc+1;
+            can_up(arg(t,i),R)
+;cc:=cc-1;(cc mod 100==0)->put(" up ")
+        );
+        appls(t,R)
+    );
+    t:=mrg(can(t))
+);
+*/
+
+can_ord:=proc(t,R1,R2)loc(s,i)(
+/* put("\ncan_ord in "t); */
+    t:=can(t);
+    appls(t,R1);
+    for(i:=1,i<=ART(t),i:=i+1,
+        can_ord(arg(t,i),R1,R2)
+    );
+    can_up(t,R2)
+/* ;put("\ncan_ord out "t) */
+);
+
+can_up:=proc(t,R)loc(s,i)(
+/* put("\ncan_up in "t); */
+    appls(t,R);
+    while(yes,
+        for(i:=1,i<=ART(t),i:=i+1,
+            can_up(arg(t,i),R)
+        );
+        appls(t,R)
+    );
+    t:=mrg(can(t))
+/* ;put("\ncan_up out "t) */
+);
+
+
+can_atr:=proc(t,R1,R2,m)loc(s,i)(   /* top-bottom R1, bottom-up R2 */
+    appls(t,R1);
+    forall(s=arg(t,i),
+        can_atr(s,R1,R2,m)
+    );
+    can_atr_up(t,R2,m,0)
+);
+
+can_atr_up:=proc(t,R,m,n)loc(s,i)(
+    (n>0)->(
+        forall(s=arg(t,i),
+            can_atr_up(s,R,m,n-1)
+        )
+    );
+    appls(t,R);
+    (yes)->(
+        forall(s=arg(t,i),
+            can_atr_up(s,R,m,m)
+        )
+    )
+);
+
+NAME apply_attr;
+apply_attr:=proc(t,R1,R2)loc(s,i)(     /* attribute-like str */
+/* put("\napply_attr dn "t); */
+    appls(t,R1);
+    forall(s=arg(t,i),
+        apply_attr(s,R1,R2)
+    );
+    appls(t,R2)
+/* ;put("\napply_attr up "t) */
+);
+
+
+

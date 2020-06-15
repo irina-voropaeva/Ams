@@ -1,0 +1,142 @@
+/*all moved to imslib
+NAMES 
+	print_cases,
+	print_end_cases,
+	interactive_back,have_add,
+	prInteractiveMode,leave_second,
+	is_turning_back,new_m,new_T,new_s,new_R,new_back,prTerminalState;
+
+have_add:=rs(b,x,y,z,a)(
+	(b->(x[y+z])) = 1,
+	(b->(a.x[y+z])) = 1,
+	x = 0
+);
+	
+
+leave_second:=rs(n,x,y,z)(
+	equ(have_add(x),1)->((n:x+Nil,z) = (n:x+Nil,z)),
+	((n:x+Nil),z) = leave_second(z),
+	((n:x+y),z) = (n:x+y,z),
+	(x,y)     = leave_second(y)
+);
+
+prTerminalState:=proc(t)loc(us)(
+	put("\nInteractive mode:\nTerminal state:"t" was found.\nSelect 1 for continue or 0 for exit.\n");
+	answer(us);
+	(~(equ(us,1))& ~(equ(us,0)))->(put("\nBad selection. Turning back."); return prTerminalState(t));
+	equ(us,0)->exit(0);
+	return 1
+);
+
+unfold_state_interactive:=proc(s,m,T,back)loc(a,p,q)(
+	show_step->(
+		put("\n---------------------------------------");
+		put("\n\n"s"\n->\n")
+	);
+	is_turning_back-->0;
+	interactive_back-->leave_second(T);
+	s:=(0,new(s),Nil);
+	/*appls(s,unfold_state_rs);*/
+	s:=appl_unfold_state(s); /*from imslib*/
+	q-->0;
+	case_let s(
+		a+p->(s--> prInteractiveMode(s,0); let(s,s,q); s-->new(s)+q);
+		s->(is_trm(s)->prTerminalState(s)) /*corrected 23.05.10*/
+	);
+	equ(is_turning_back,1)->(
+		m:=new_m-1; T:=new_T; 
+		back:=new_back;
+		return (state new_R m T back)
+	)else(
+		show_step->(
+			put("\nnew states");
+			prn_list(s,(()+()));
+			put("\n---------------------------------------")
+		)
+	);
+    case_let s(
+        0 -> return 0;  
+        a.p+q->return((a->p)+act2after q);
+        a.p  ->return(a->p);
+		Delta->return Delta;
+		put("\nunfold: not correct state\n"p);
+		wait_ent()
+    )       
+);
+
+NAME have_back;
+
+have_back:=rs(x,y,z,n)(
+	equ(have_add(x),1)->((n:x+Nil,z) = 1),
+	(n:x+Nil,z) = 0,
+	(n:x+y,z) = 1,
+	(x,y)   = have_back(y),
+	x       = 0 
+);
+
+/*0: exist,-1: turn back (not realizaed yet),1..n:selection*/
+print_cases:=rs(x,y,R,n)(
+	(n,x+y,R) = put("\n"n":\n")&put(x)&print_cases(n+1,y,R),
+	(n,x,R)   = put("\n"n":\n")&put(x)&print_end_cases(R,n)
+);
+
+print_end_cases:=proc(R,n)loc(us)(
+	put("\nInteractive mode:\nSelect 1..."n :" or 0 for exit");
+	have_back(interactive_back)->(put(", or -1 for back"));
+	put("\n");
+	answer(us);
+	(((us<1|/us>n)& ~(equ(us,0))& ~(equ(us,-1)))|/ ~(isnum(us)))->(put("\nBad selection. Turning back."); return print_end_cases(R,n));
+	return us
+);
+
+NAMES next_step,turn_back,turning_back,having_adds;
+
+having_adds:=rs(x,y)(
+	equ(have_add(x),1)->((x+y) = 1),
+	(x+y) = having_adds(y), 
+	x = equ(have_add(x),1)
+);
+
+turn_back:=rs(x,y,z,R,n,e)(
+	(n:x+Nil,R) = (n:x+Nil,R),
+	having_adds(x+y)->((n:x+y,R) = (n:x+y,R)),
+	(n:x+y,R) = R,
+	(x,y)   = turn_back(y)
+);
+
+turning_back:=proc()(
+	is_turning_back:=1;
+	/*interactive_back:=turn_back(interactive_back); for imslib mod*/
+	interactive_back-->turn_back(interactive_back);
+	let(interactive_back,(new_m:new_R+Nil,new_T));
+	~(yes)->(let(interactive_back,(new_m:new_R,new_T)));
+	new_back:=new_T;
+	return interactive_back
+);
+
+next_step:=rs(x,y,z,R,n,m)(
+	(m,0,x,R)      = exit(0),
+	(m,-1,x,R) 	   = turning_back(1),
+	(m,m,x+y,R)    = (x,y+R),
+	(m,n,x+y,R)    = next_step(m+1,n,y,x+R),
+	(m,m,x,R)      = (x,R)
+);
+
+prInteractiveMode:=proc(L,R)loc(u,v,p)(
+	case_let L(
+		u+v->(
+			L-->next_step(1,print_cases(1,L,R),L,R);
+			let(L,L,R)
+		);
+		Nil->(
+			case_let R(
+				(u+v+p)->(
+					return prInteractiveMode(L,u+v+p)
+				);
+				(u+v)->return (L,u,v)
+			)
+		)
+	);
+	return (L,R)
+);*/
+ 

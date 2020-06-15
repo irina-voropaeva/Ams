@@ -1,0 +1,55 @@
+
+/* /////////////////////////  aplan  /////////////////////////// */
+
+    INCLUDE <apsystem.org.ua/goat_model/1-aplan/std.ap>
+    INCLUDE <apsystem.org.ua/goat_model/1-aplan/gen_obj.ap>
+    INCLUDE <apsystem.org.ua/goat_model/1-aplan/rsys.ap>
+    INCLUDE <apsystem.org.ua/goat_model/1-aplan/array.ap>
+    INCLUDE <apsystem.org.ua/goat_model/1-aplan/strat.ap>
+    INCLUDE <apsystem.org.ua/goat_model/1-aplan/apply_obj.ap>
+
+/* gen_obj.ap can be included instead of gen_obj_new.ap */
+
+/* //////////////////////  common names  /////////////////////// */
+
+NAMES interact,/* is_trm,*/ is_trm_env, show_env, new_env,unfold_rs,
+      clock, 
+
+        unfold,                    /* prog.ap     */
+
+        combine,
+
+    /* must be defined in or included to prog.ap */
+
+        /*is_act,*/               /* action.ap   */
+
+        ins,                       /* interact.ap */
+        is_proc_call,              /* task.ap     */
+        service;
+
+/* ///////////////////////// simulator /////////////////////////// */
+
+    
+    INCLUDE <apsystem.org.ua/goat_model/3-simulator/intens.ap>
+    INCLUDE <apsystem.org.ua/goat_model/3-simulator/seq.ap>
+    INCLUDE <apsystem.org.ua/goat_model/3-simulator/par.ap>
+    INCLUDE <apsystem.org.ua/goat_model/3-simulator/sim.ap>
+    INCLUDE <apsystem.org.ua/goat_model/3-simulator/action.ap>
+
+
+/* ///////////////////// insertion program ///////////////////// */
+	    INCLUDE <apsystem.org.ua/goat_model/4-Model-driver/1-md.ap>
+		INCLUDE <apsystem.org.ua/goat_model/4-Model-driver/2-filters.ap>
+		INCLUDE <apsystem.org.ua/goat_model/4-Model-driver/3-state unfolding.ap>
+		INCLUDE <apsystem.org.ua/goat_model/4-Model-driver/4-trace processing.ap>
+		INCLUDE <apsystem.org.ua/goat_model/4-Model-driver/5-interactive mode.ap>
+
+/* ///////////////////// insertion program ///////////////////// */
+
+    INCLUDE <prog.ap>
+    INCLUDE <interact.ap>
+
+/* ///////////////////////////////////////////////////////////// */
+
+
+

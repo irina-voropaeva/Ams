@@ -1,0 +1,42 @@
+
+/*
+Identities:
+associativity, right ditributivity
+(a.u;v)=a.(u;v)
+*/
+
+/*
+
+input:  sequential composiion of two agent expressions;
+output: sum of at least one guarded expr and agent expr,
+        or termination constant.
+gurded expr: a.u
+
+*/
+
+/* all moved to imslib 
+NAMES seq ,right_seq;
+
+seq:=rs(a,P,Q,R)(
+    ((P+Q);R) = seq(P;R)+right_seq(Q;R),
+    ((P;Q);R) = seq(P;Q;R),
+    ((a.Q);R) = a.right_seq(Q;R),
+    (Delta;R) = seq R,
+    (  bot;R) = bot,
+    (    0;R) = 0,
+is_act(`(a))->(
+    (    a;R) = a.R
+),
+is_proc_call(`(P))->(
+    (    P;R) = (unfold(P);R)             
+),
+    (    P;R) = right_seq(P;R)             
+);
+
+right_seq:=rs(a,P,Q,R)(
+    ( (P;Q);R) = right_seq(P;Q;R),
+    (a.P;Q   ) = a.right_seq(P;Q),
+    (  P;Q   ) = (P;right_seq Q)
+);
+*/
+

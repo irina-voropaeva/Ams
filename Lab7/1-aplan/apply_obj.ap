@@ -1,0 +1,170 @@
+
+
+NAMES apply_obj,compute_obj;
+apply_obj:=proc(x,y)loc(u,v,w,r,s,t)(
+    iterate_case_let y(
+        ((u->v)+w)->
+            compute_obj(x,u)->y-->v else y-->w;
+        ( u->v   )->
+            compute_obj(x,u)->y-->v else return 0;
+        ( u; v   )->(
+            x-->apply_obj(x,u);
+            y-->v
+        );
+        ( r:= s  )->(
+            y-->(r-->s)
+        );
+        ( r.s-->t  )->(
+            x-->new_env x;
+            u-->compute_obj(x,t);
+            v-->x.r;
+            v.s-->u;
+            return x
+        );
+        ( r-->s  )->(
+            x-->new_env x;
+            u-->compute_obj(x,s);
+            x.r-->u;
+            return x
+        );
+        Nil       ->(
+            return x
+        );
+        Delta     ->(
+            return x
+        );
+        return 0
+    )
+);
+
+compute_obj:=proc(x,y)loc(z,s,i)(
+    (ART(y)==0)->(
+        z-->x.y;
+        found z->(
+            return z
+        )else(
+            return y
+        )
+    );
+    z-->new(y);
+    forall(s=arg(z,i),
+        arg(z,i)-->compute_obj(x,s)
+    );
+    return can(z)
+);
+
+NAMES prn_obj,prn_body;
+prn_obj:=proc(z)loc(x)(
+    let(z, obj x);
+    yes->(                 /* corrected 12.04.07 */
+        put("\nobj(");
+        prn_body(1,x);
+        put("\n);")
+    )else put(z);
+    return 1
+);
+
+
+NAMES prn_obj_body,paragraph;
+prn_body:=proc(n,x)loc(m,a,y)(
+    loop(
+        paragraph(n);
+        case_let x(
+	    (m:obj a,y)->prn_obj_body(n,m,a,",");
+            (m:obj a;y)->prn_obj_body(n,m,a,";");
+	    (m:obj a  )->(
+		prn_obj_body(n,m,a,Nil);
+                return 1
+	    );
+	    (m:a,y)->(put(m":("a);put("),"));
+            (m:a;y)->(put(m":("a);put(");"));
+	    (m:a  )->(
+		put(m":("a")");
+                return 1
+	    );
+            put(x);
+            return 1
+	);
+        x-->y
+    )
+);
+
+prn_obj_body:=proc(n,m,a,s)(
+    put(m":obj(");
+    prn_body(n+1,a);
+    paragraph(n);
+    put(")");
+    ~(equ(s,Nil))->put(s);
+    return 1
+);
+
+paragraph:=proc(n)loc(i)(
+    put("\n");
+    for(i:=1,i<=n,i:=i+1,
+	put("    ")
+    );
+    return 1
+);
+
+
+/* =========================================================== */
+
+NAMES prn_obj_file, prn_body_file;
+prn_obj_file:=proc(file_name,z)loc(x)(
+    let(z, obj x);
+    put_file(file_name,"\nobj(");
+    prn_body_file(file_name,1,x);
+    put_file(file_name,"\n);");
+    return 1
+);
+
+NAME prn_obj_body_file,paragraph_file;
+prn_body_file:=proc(file_name,n,x)loc(m,a,y)(
+    loop(
+        paragraph_file(file_name,n);
+        case_let x(
+	    (m:obj a,y)->prn_obj_body_file(file_name,n,m,a,",");
+            (m:obj a;y)->prn_obj_body_file(file_name,n,m,a,";");
+	    (m:obj a  )->(
+		prn_obj_body_file(file_name,n,m,a,Nil);
+                return 1
+	    );
+	    (m:a,y)->(
+                put_file(file_name,"("m"):("a);put_file(file_name,"),")
+            );
+
+            (m:a;y)->(
+                put_file(file_name,"("m"):("a);put_file(file_name,");")
+            );
+
+	    (m:a  )->(
+        	put_file(file_name,"("m"):("a);put_file(file_name,")");
+                return 1
+	    );
+
+
+            put_file(file_name,x);
+            return 1
+	);
+        x-->y
+    )
+);
+
+prn_obj_body_file:=proc(file_name,n,m,a,s)(
+    put_file(file_name,"("m"):obj(");
+    prn_body_file(file_name,n+1,a);
+    paragraph_file(file_name,n);
+    put_file(file_name,")");
+    ~(equ(s,Nil))->put_file(file_name,s);
+    return 1
+);
+
+paragraph_file:=proc(file_name,n)loc(i)(
+    put_file(file_name,"\n");
+    for(i:=1,i<=n,i:=i+1,
+	put_file(file_name,"    ")
+    );
+    return 1
+);
+
+/* =========================================================== */

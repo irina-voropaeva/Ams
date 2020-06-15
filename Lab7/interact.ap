@@ -1,0 +1,41 @@
+
+
+/*
+	Parallel additive insertion function for jugs rs
+*/
+
+NAMES fill_proc,pour_proc,shift_proc, sshift_proc, inter_proc;
+ins:=rs(a,x,y,z,P,Q,E)(
+/* Additivity */
+    E[P+Q]	 	     = E[P]+copy(E[Q]),
+/* Jug rules */
+	E[shift(x, y).P] = shift_proc(E,x,y,P),
+	E[sshift(x).P] = sshift_proc(E,x,P),
+/* General rules */
+    E[a.P] 		     = a.E[P],
+    E[P] 		     = E[short_intens P]
+);
+
+shift_proc:=proc(E,x,y,P)(
+	(equ(E.W.coast,1) & equ(E.G.coast,1) & equ(E.C.coast,1) & equ(E.M.coast,1))->return(goal_reached.E[Delta]);
+	~(equ(E.x.coast,E.y.coast))->return 0;
+	(equ(E.x.coast, ~(E.W.coast)) & equ(E.W.coast, E.G.coast)) -> return 0;
+	(equ(E.x.coast, ~(E.G.coast)) & equ(E.G.coast, E.C.coast)) -> return 0;
+	equ(E.x.coast,0)->(
+		E.x.coast-->1;
+		E.y.coast-->1
+		)
+	else(
+		E.x.coast-->0;
+		E.y.coast-->0
+		);
+
+	return(shift(x,y).copy(E[P]))
+);
+sshift_proc:=proc(E,x,P)(
+	(equ(E.W.coast,1) & equ(E.G.coast,1) & equ(E.C.coast,1) & equ(E.M.coast,1))->return(goal_reached.E[Delta]);
+	(equ(E.x.coast, ~(E.W.coast)) & equ(E.W.coast, E.G.coast)) -> return 0;
+	(equ(E.x.coast, ~(E.G.coast)) & equ(E.G.coast, E.C.coast)) -> return 0;
+	E.x.coast--> ~(E.x.coast);
+	return(sshift(x).copy(E[P]))
+);

@@ -1,0 +1,107 @@
+
+
+/* ______________________  unfold_state  _______________________ */
+
+/* all moved in imslib. Combination of intensional and interaction semantics */
+
+
+NAMES unfold_state_rs; 
+unfold_state_rs:=rs(L,R,a,x,y,z)(
+    (L,     x+y,     R) = (L,     x,     y+R),       	/* 1 */
+    (L,   a.x,       R) = (L+a.x, Nil,     R),  		/* 2 */  
+is_trm `(x)->(                                      	/* 3 */
+    (L,     x,       R) = (L+  x, Nil,     R)
+),
+    (L, x[Delta],	 R) = (L+x[Delta], Nil,R),          /* 4 corrected 07.06.10 */
+    (L, x[y],        R) = (L, ins(x[y]),   R),          /* 5 corrected 25.03.10 */
+    (L,(x[y];z),     R) = (L,(ins(x[y]);z),R),          /* 6 corrected 25.03.10 */
+    (L,     Nil,   x+R) = (L,    x,        R),          /* 7  */
+    (L+R,   Nil,   Nil) = turn_right(L+R),              /* 8 corrected 07.06.10 */
+    (L,     Nil,   Nil) = L,			               	/* 9  */
+    (L,     x,       R) = (L,  short_intens x,  R)   	/* 10 */ 
+);
+
+
+
+
+/*
+input: AL expression E
+output: normal form of E
+<AL>::= <terminal>|<action>.<AL>|<AL>+<AL>|<functional>|
+        <AL>;<AL>|<env state>[<AL>]
+normal form::=
+ 	<action>.<AL>+<action>.<AL>+...+<action>.<AL>
+functional: unfold_rs, intens
+insertion function (E[...]): ins 
+*/
+
+
+
+NAME act2after;
+
+unfold_state:=proc(s)loc(E,a,p,q)(
+
+show_step->(
+    put("\n---------------------------------------");
+    put("\n\n"s"\n->\n")
+);
+
+/* trace unfold_rs;
+trace unfold_state_rs; 
+trace ins;   */
+
+
+    s:=(0,new(s),Nil);
+
+    appls(s,unfold_state_rs);
+	/* s:=appl_unfold_state(s); from imslib */
+	s-->apply_idemp s;
+show_step->(
+put("\nnew states");
+    prn_list(s,(()+()));
+    put("\n---------------------------------------")
+);
+    case_let s(
+        0 -> return 0[0];  /* corrected 12.06.10. */
+        a.p+q->return((a->p)+act2after q);
+        a.p  ->return(a->p);
+		E[Delta]->(  /* corrected 07.06.10 */
+			return(E[Delta])
+		);
+		p->(
+			put("\nunfold: not correct state\n"s);
+			wait_ent()
+		)
+    )       
+);
+
+act2after:=rs(a,p,q)(          
+    a.p+q = (a->p)+act2after q,
+    a.p   =  a->p 
+);
+
+/* ========================================= */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

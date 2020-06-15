@@ -1,0 +1,43 @@
+
+/*
+Everything in C imslib
+
+NAMES synchr,lmrg;
+
+synchr:=rs(x,y,z,a,b,i,j)(
+    (x+y,  z)=synchr(x,z)+synchr(y,z),
+    (x,  y+z)=synchr(x,y)+synchr(x,z),
+    (a.x,b.y)=combine(a><b).mrg(x||y),
+(is_trm(`(x))|/is_trm(`(y)))->(
+    (x,    y)=0
+),
+    (x,    y)=synchr(intens x,intens y)
+);
+
+NAME alpha;
+lmrg:=rs(eps,a,x,y,z,a)(
+    (x+y,z)=lmrg(x,z)+lmrg(y,z),
+    (a.x,y)=a.mrg(x||y),
+is_trm(eps)->(
+    (eps,x)=alpha(eps,x)
+),
+    (x,  y)=lmrg(intens x,y)
+);
+
+ alpha:=rs(z)(
+    (0,z)=0,
+    (Delta,z)=z,
+    (bot,z)=bot
+);
+
+NAME Lmrg;
+Lmrg:=rs(eps,a,x,y,z,a)(
+    (x+y,z)=Lmrg(x,z)+Lmrg(y,z),
+    (key x.y,z) = key x.(y|||z),
+    (a:x,y)=key(a:x).y,
+is_trm(eps)->(
+    (eps,x)=alpha(eps,x)
+),
+    (x,  y)=Lmrg(intens x,y)
+);
+*/

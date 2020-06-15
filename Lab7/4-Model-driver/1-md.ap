@@ -1,0 +1,121 @@
+/*all moved to imslib: some names still here */
+
+NAME run_model;
+
+NAMES space_cover, /* corrected 15.05.10 AL */
+	
+    check_filter,
+    maxtrace,
+    show_step,
+    show_actions,
+    model_time,
+    stop_on_termination,
+
+    unfold_state, /* goal_state_processing,safety_violation_processing, */
+    visited_processing, 
+      /* deadlock_processing,successful_processing,*/
+    interactive_mode
+      /*,unfold_state_interactive*/;  
+
+interactive_mode:=0; /*corected 30.11.09 by VP*/
+model_time  :=0;
+show_actions:=0;
+show_step   :=0;
+
+
+run_model:=proc(T)loc(m,n,back,P,Q,R,B,f,s,flag)(
+    clock:=time_start();
+    space_cover:=1;
+    T-->(0:init->T,Nil); 
+	interactive_flag:=1;
+	
+    loop(
+/*    prn(11:T);wait_ent();*/
+        case_let T(
+            (m:Nil,Nil)->(
+                put("\n\nrunning model finished");
+				space_cover->(
+					put("\nall states covered")
+				)else put("\nnot all space covered"); /* corrected 15.05.10. AL */
+				return 1
+            );
+            (m:Nil,       n:P+Q,back)->(T-->(n:Q,  back)); 
+            (m:Nil,       n:Nil,back)->T-->(n:Nil,back);
+            (m: B->(P+Q),       back)->T-->(m:(B->P)+(B->Q),back);
+            (m:(B->P)+Q,        back)->(
+				show_step->case_let B(	/* corrected 09.06.10 */
+					Mesg s ->(
+						put("\n\n"m": ");
+						put s
+					);
+					put("\n\n"m": "B)
+				); 
+				show_step & ~(equ(Q,Nil))->put(",\n"Q);	/* corrected 09.06.10 */
+				model_time->(
+					s:=time_stop(clock);
+					prn_time(s)
+				);
+
+				f-->check_filter (B,P);
+				case_let f( 
+					goal state->(
+						goal_state_processing T;
+						T-->(m:Q,back);
+						show_actions->put("\n\nback\n") 
+						/* else put(" back") corrected 09.06.10 */
+					); 
+					safety violation s ->(
+						safety_violation_processing(T,s); 
+						T-->(m:Q,back);
+						show_actions->put("\n\nmodel: back\n")
+						/* else put(" back")  corrected 09.06.10 */
+					); 
+					visited->(
+						visited_processing T;
+						T-->(m:Q,back) /* ;
+						03.05.10 AL
+						show_actions->put("\n\nmodel: back\n")
+						else put(" back") */ 
+					); 
+					successful termination->(
+						successful_processing T;
+                        stop_on_termination->wait_ent();          
+						T-->(m:Q,back)  
+					);  
+					dead lock->(					/* corrected 02.05.10 AL */
+						deadlock_processing T;
+                        stop_on_termination->wait_ent();          
+						T-->(m:Q,back)  
+					); 
+					bot->(							/* corrected 02.05.10 AL */
+						bot_processing T;
+                        stop_on_termination->wait_ent();          
+						T-->(m:Q,back)  
+					); 
+					not filtered->( 
+						m<=maxtrace->( 
+							interactive_mode->(
+								R-->unfold_state_interactive(new(P),m,T,back);
+								let(R,state R m T back)
+							)else R-->unfold_state new(P);
+                            stg_dn:=1;
+                            T-->(m+1:R,T)
+						)else(
+							show_step->put("\n\nm="m">maxtrace back\n"); /* corrected 09.06.10 */ 
+							space_cover:=0;wait_ent();
+							model_dn:=0;
+							T-->(m:Q,back)    
+						)            
+					) 
+				) 
+            );
+            (m:P+Q, back)->(	/* corrected 08.06.10 */
+				T-->(m:(tau->P)+Q,back)
+			);
+            (m:P,back)->(
+                T-->(m:P+Nil,back)
+            );
+            P->(put("\nloop in run_model:"P);wait_ent())
+        )
+    )
+);

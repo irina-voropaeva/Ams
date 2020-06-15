@@ -1,0 +1,321 @@
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+sshift  M
+tau
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, W)
+tau
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+sshift  M
+tau
+
+
+successful termination state
+goal_reached-> (obj( W: obj( coast: 1); G: obj( coast: 1); C: obj( coast: 1); M: obj( coast: 1)))  [Delta]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+shift( M, G)
+shift( M, C)
+sshift  M
+shift( M, G)
+goal_reached
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+shift( M, G)
+shift( M, C)
+shift( M, W)
+sshift  M
+tau
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+shift( M, G)
+shift( M, C)
+shift( M, W)
+shift( M, G)
+sshift  M
+tau
+
+
+running model finished
+all states covered
+modeling finished
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+sshift  M
+tau
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, W)
+tau
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+sshift  M
+tau
+
+
+successful termination state
+goal_reached-> (obj( W: obj( coast: 1); G: obj( coast: 1); C: obj( coast: 1); M: obj( coast: 1)))  [Delta]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+shift( M, G)
+shift( M, C)
+sshift  M
+shift( M, G)
+goal_reached
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+shift( M, G)
+shift( M, C)
+shift( M, W)
+sshift  M
+tau
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+shift( M, G)
+shift( M, C)
+shift( M, W)
+shift( M, G)
+sshift  M
+tau
+
+
+running model finished
+all states covered
+modeling finished
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+sshift  M
+tau
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, W)
+tau
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+sshift  M
+tau
+
+
+successful termination state
+goal_reached-> (obj( W: obj( coast: 1); G: obj( coast: 1); C: obj( coast: 1); M: obj( coast: 1)))  [Delta]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+shift( M, G)
+shift( M, C)
+sshift  M
+shift( M, G)
+goal_reached
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+shift( M, G)
+shift( M, C)
+shift( M, W)
+sshift  M
+tau
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+shift( M, G)
+shift( M, C)
+shift( M, W)
+shift( M, G)
+sshift  M
+tau
+
+
+running model finished
+all states covered
+modeling finished
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+sshift  M
+tau
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, W)
+tau
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+sshift  M
+tau
+
+
+successful termination state
+goal_reached-> (obj( W: obj( coast: 1); G: obj( coast: 1); C: obj( coast: 1); M: obj( coast: 1)))  [Delta]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+shift( M, G)
+shift( M, C)
+sshift  M
+shift( M, G)
+goal_reached
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+shift( M, G)
+shift( M, C)
+shift( M, W)
+sshift  M
+tau
+
+
+dead lock state
+tau-> 0  [0]
+
+trace
+init
+shift( M, G)
+sshift  M
+shift( M, W)
+shift( M, G)
+shift( M, C)
+shift( M, W)
+shift( M, G)
+sshift  M
+tau
+
+
+running model finished
+all states covered
+modeling finished

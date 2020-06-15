@@ -1,0 +1,34 @@
+
+
+
+INCLUDE <include.ap>
+
+
+/* ======== Settings ================ */
+maxtrace    :=1000;
+model_time:=0;
+interactive_mode:=0;
+trace_unf:=0;
+show_actions:=0;
+show_step:=0;
+make_traces_files:=0;
+stop_on_termination:=0;
+/* ================================== */
+
+NAME perform;
+task:=(
+    is_proc_call-->make_pred unfold_rs;
+    sim_init();
+    perform ()
+);
+
+
+
+perform:=proc()loc(agent)(
+    system("cp empty_file.ap screen.ap");
+    set_dstream("screen.ap");  
+	agent:=get_term_file("input.ap");
+/* trace ins;	  */
+    run_model agent;
+	put("\nmodeling finished")
+);
